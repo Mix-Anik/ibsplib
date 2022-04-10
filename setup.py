@@ -9,6 +9,5 @@ setup(
     packages=['ibsplib'],
     license='MIT',
     url='https://github.com/Mix-Anik/ibsplib',
-    download_url='',
     keywords=['quake 3', 'q3', 'IBSP', 'BSP']
 )
