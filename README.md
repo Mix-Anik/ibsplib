@@ -1,6 +1,6 @@
 # IBSPLib
 
-ibsplib is Python package for working with Quake 3 IBSP structures
+ibsplib is Python package for working with Quake 3 IBSP structures  
 References were taken from http://www.mralligator.com/q3
 
 - Parsing IBSP
