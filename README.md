@@ -4,8 +4,8 @@ ibsplib is Python package for working with Quake 3 IBSP structures
 References were taken from http://www.mralligator.com/q3
 
 - Parsing IBSP
-- No dependencies
 - Typings & code completion included
+- Numpy friendly
 - More to come....
 
 ### Installation
@@ -21,11 +21,7 @@ from ibsplib import IBSP
 
 
 bsp_path = f'{Path(__file__).parent}\\<map name>.bsp'
-
-with open(bsp_path, 'rb') as f:
-    bsp_buffer = bytearray(f.read())
-
-bsp = IBSP(bsp_buffer)
+bsp = IBSP(bsp_path)
 
 print(f'Version: {bsp.header.version}')
 print('Textures used:')
