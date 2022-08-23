@@ -16,8 +16,8 @@ import numpy as np
 import numpy.typing as npt
 
 from ibsplib.constants import *
-from ibsplib.base import *
-from ibsplib.exceptions import LumpIndexOutOfBounds, ErrorReadingBSPFile, FileDoesNotExist, NotIBSPFileException, UnsupportedBSPFileVersion
+from ibsplib.base import BaseStructure
+from ibsplib.exceptions import *
 
 
 # %% [Lump class definitions]
@@ -77,13 +77,25 @@ class Texture(BaseStructure):
     def name(self) -> str:
         return self._name.decode(CHAR_ENCODING)
 
+    @name.setter
+    def name(self, value) -> None:
+        self._cp_str_val(value, '_name', 64)
+
     @property
     def flags(self) -> np.uint32:
         return np.uint32(self._flags)
 
+    @flags.setter
+    def flags(self, value) -> None:
+        self._cp_num_val(value, '_flags')
+
     @property
     def contents(self) -> np.uint32:
         return np.uint32(self._contents)
+
+    @contents.setter
+    def contents(self, value) -> None:
+        self._cp_num_val(value, '_contents')
 
 
 class Plane(BaseStructure):
@@ -93,9 +105,9 @@ class Plane(BaseStructure):
 
     Attributes
     ----------
-    normal : npt.NDArray[np.single]
+    normal : npt.NDArray[np.float32]
         Plane normal
-    dist : np.single
+    dist : np.float32
         Distance from origin to plane along normal
     sz : np.uint32
         Structure's data total size
@@ -108,12 +120,20 @@ class Plane(BaseStructure):
     _sz = 16
 
     @property
-    def normal(self) -> npt.NDArray[np.single]:
-        return np.array(self._normal, dtype=np.single)
+    def normal(self) -> npt.NDArray[np.float32]:
+        return np.array(self._normal, dtype=np.float32)
+
+    @normal.setter
+    def normal(self, value) -> None:
+        self._cp_arr(value, '_normal')
 
     @property
-    def dist(self) -> np.single:
-        return np.single(self._dist)
+    def dist(self) -> np.float32:
+        return np.float32(self._dist)
+
+    @dist.setter
+    def dist(self, value) -> None:
+        self._cp_num_val(value, '_dist')
 
 
 class Node(BaseStructure):
@@ -290,9 +310,9 @@ class Model(BaseStructure):
 
     Attributes
     ----------
-    mins : npt.NDArray[np.single]
+    mins : npt.NDArray[np.float32]
         Bounding box min coord
-    maxs : npt.NDArray[np.single]
+    maxs : npt.NDArray[np.float32]
         Bounding box max coord
     face : np.uint32
         First face for model
@@ -317,12 +337,12 @@ class Model(BaseStructure):
     _sz = 40
 
     @property
-    def mins(self) -> npt.NDArray[np.single]:
-        return np.array(self._mins, dtype=np.single)
+    def mins(self) -> npt.NDArray[np.float32]:
+        return np.array(self._mins, dtype=np.float32)
 
     @property
-    def maxs(self) -> npt.NDArray[np.single]:
-        return np.array(self._maxs, dtype=np.single)
+    def maxs(self) -> npt.NDArray[np.float32]:
+        return np.array(self._maxs, dtype=np.float32)
 
     @property
     def face(self) -> np.uint32:
@@ -416,11 +436,11 @@ class Vertex(BaseStructure):
 
     Attributes
     ----------
-    position : npt.NDArray[np.single]
+    position : npt.NDArray[np.float32]
         Vertex position
-    texcoord : npt.NDArray[np.single]
+    texcoord : npt.NDArray[np.float32]
         Vertex texture coordinates. 0=surface, 1=lightmap
-    normal : npt.NDArray[np.single]
+    normal : npt.NDArray[np.float32]
         Vertex normal
     color : npt.NDArray[np.byte]
         Vertex color. RGBA
@@ -437,16 +457,16 @@ class Vertex(BaseStructure):
     _sz = 44
 
     @property
-    def position(self) -> npt.NDArray[np.single]:
-        return np.array(self._position, dtype=np.single)
+    def position(self) -> npt.NDArray[np.float32]:
+        return np.array(self._position, dtype=np.float32)
 
     @property
-    def texcoord(self) -> npt.NDArray[np.single]:
-        return np.array(self._texcoord, dtype=np.single)
+    def texcoord(self) -> npt.NDArray[np.float32]:
+        return np.array(self._texcoord, dtype=np.float32)
 
     @property
-    def normal(self) -> npt.NDArray[np.single]:
-        return np.array(self._normal, dtype=np.single)
+    def normal(self) -> npt.NDArray[np.float32]:
+        return np.array(self._normal, dtype=np.float32)
 
     @property
     def color(self) -> npt.NDArray[np.byte]:
@@ -540,11 +560,11 @@ class Face(BaseStructure):
         Corner of this face's lightmap image in lightmap
     lm_size : npt.NDArray[np.uint32]
         Size of this face's lightmap image in lightmap
-    lm_origin : npt.NDArray[np.single]
+    lm_origin : npt.NDArray[np.float32]
         World space origin of lightmap
-    lm_vecs : npt.NDArray[np.single]
+    lm_vecs : npt.NDArray[np.float32]
         World space lightmap s and t unit vectors
-    normal : npt.NDArray[np.single]
+    normal : npt.NDArray[np.float32]
         Surface normal
     size : npt.NDArray[np.uint32]
         Patch dimensions
@@ -611,16 +631,16 @@ class Face(BaseStructure):
         return np.array(self._lm_size, dtype=np.uint32)
 
     @property
-    def lm_origin(self) -> npt.NDArray[np.single]:
-        return np.array(self._lm_origin, dtype=np.single)
+    def lm_origin(self) -> npt.NDArray[np.float32]:
+        return np.array(self._lm_origin, dtype=np.float32)
 
     @property
-    def lm_vecs(self) -> npt.NDArray[np.single]:
-        return np.array(self._lm_vecs, dtype=np.single)
+    def lm_vecs(self) -> npt.NDArray[np.float32]:
+        return np.array(self._lm_vecs, dtype=np.float32)
 
     @property
-    def normal(self) -> npt.NDArray[np.single]:
-        return np.array(self._normal, dtype=np.single)
+    def normal(self) -> npt.NDArray[np.float32]:
+        return np.array(self._normal, dtype=np.float32)
 
     @property
     def size(self) -> npt.NDArray[np.uint32]:
@@ -878,16 +898,36 @@ class IBSP:
         with open(path, 'wb') as f:
             f.write(self.__data)
 
-    @lru_cache(maxsize=32)
-    def get_lump_entries(self, lump_id: int) -> List[Any]:
-        """ Returns list of requested lump entries """
+    def extract_lumps(self, dirpath: str) -> None:
+        """ Extracts bsp lumps as separate files to given directory """
+
+        if not os.path.isdir(dirpath):
+            raise DirectoryDoesNotExist(f'Path does not correspond to an actual directory - "{dirpath}"')
+
+        for lump_id in range(17):
+            lump_class_name = self.lump_cls_map[lump_id].__name__.lower()
+            lump_data = self.get_lump_data(lump_id)
+
+            with open(f'{dirpath}\\{lump_id}_{lump_class_name}.lump', 'wb') as f:
+                f.write(lump_data)
+
+    def get_lump_data(self, lump_id: int) -> bytearray:
+        """ Returns requested lump byte data """
 
         if not 0 <= lump_id <= 16:
             raise LumpIndexOutOfBounds(f'Lump with index "{lump_id}" does not exist')
 
         direntry = self.__header.direntry[lump_id]
+
+        return bytearray(self.__data[direntry.offset: direntry.offset + direntry.length])
+
+    @lru_cache(maxsize=32)
+    def get_lump_entries(self, lump_id: int) -> List[Any]:
+        """ Returns list of requested lump entries """
+
+        direntry = self.__header.direntry[lump_id]
         lump_entry_cls = self.lump_cls_map[lump_id]
-        raw_lump_data = bytearray(self.__data[direntry.offset: direntry.offset + direntry.length])
+        raw_lump_data = self.get_lump_data(lump_id)
         lump_entries = []
 
         if lump_id in [ENTITIES_LUMP, VISDATA_LUMP]:

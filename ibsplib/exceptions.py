@@ -1,5 +1,5 @@
 __all__ = ["StructureSizeNotDefined", "LumpIndexOutOfBounds", "ErrorReadingBSPFile", "NotIBSPFileException", "FileDoesNotExist",
-           "UnsupportedBSPFileVersion"]
+           "UnsupportedBSPFileVersion", "DirectoryDoesNotExist"]
 
 
 class StructureSizeNotDefined(Exception):
@@ -23,4 +23,8 @@ class FileDoesNotExist(Exception):
 
 
 class UnsupportedBSPFileVersion(Exception):
+    pass
+
+
+class DirectoryDoesNotExist(Exception):
     pass
