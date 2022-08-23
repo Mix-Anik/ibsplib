@@ -16,11 +16,10 @@ pip install ibsplib
 
 ### Usage
 ```py
-from pathlib import Path
 from ibsplib import IBSP
 
 
-bsp_path = f'{Path(__file__).parent}\\<map name>.bsp'
+bsp_path = '...\\<map name>.bsp'
 bsp = IBSP(bsp_path)
 
 print(f'Version: {bsp.header.version}')
