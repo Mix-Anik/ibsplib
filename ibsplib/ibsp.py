@@ -8,6 +8,7 @@ __all__ = ["Entities", "Texture", "Plane", "Node", "Leaf", "LeafFace", "LeafBrus
 import os
 
 from ctypes import c_byte, c_uint32, c_float, c_char
+from functools import lru_cache
 from pathlib import Path
 from typing import List, cast, Any
 
@@ -846,7 +847,6 @@ class IBSP:
     def __init__(self, filepath: str):
         self.__data = self._read(filepath)
         self.__header = IBSPHeader.from_buffer(self.__data[:IBSPHeader.sz])
-        self.__lump_cache = {}
 
         if self.__header.magic != 'IBSP':
             raise NotIBSPFileException(f'Header magic number mismatch: found "{self.__header.magic}", but should be "IBSP"')
@@ -878,14 +878,12 @@ class IBSP:
         with open(path, 'wb') as f:
             f.write(self.__data)
 
+    @lru_cache(maxsize=32)
     def get_lump_entries(self, lump_id: int) -> List[Any]:
         """ Returns list of requested lump entries """
 
         if not 0 <= lump_id <= 16:
             raise LumpIndexOutOfBounds(f'Lump with index "{lump_id}" does not exist')
-
-        if lump_id in self.__lump_cache:
-            return self.__lump_cache[lump_id]
 
         direntry = self.__header.direntry[lump_id]
         lump_entry_cls = self.lump_cls_map[lump_id]
@@ -901,9 +899,6 @@ class IBSP:
             for i in range(total_lump_entries):
                 raw_entry_data = raw_lump_data[entry_size * i: entry_size * (i + 1)]
                 lump_entries.append(lump_entry_cls.from_buffer(raw_entry_data))
-
-        # cache result for reuse
-        self.__lump_cache[lump_id] = lump_entries
 
         return lump_entries
 
