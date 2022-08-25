@@ -7,7 +7,7 @@ __all__ = ["Entities", "Texture", "Plane", "Node", "Leaf", "LeafFace", "LeafBrus
 
 import os
 
-from ctypes import c_byte, c_uint32, c_float, c_char
+from ctypes import c_ubyte, c_uint32, c_float, c_char
 from functools import lru_cache
 from pathlib import Path
 from typing import List, cast, Any
@@ -124,8 +124,8 @@ class Plane(BaseStructure):
         return np.array(self._normal, dtype=np.float32)
 
     @normal.setter
-    def normal(self, value) -> None:
-        self._cp_arr(value, '_normal')
+    def normal(self, arr) -> None:
+        self._cp_arr(arr, '_normal')
 
     @property
     def dist(self) -> np.float32:
@@ -168,17 +168,33 @@ class Node(BaseStructure):
     def plane(self) -> np.uint32:
         return np.uint32(self._plane)
 
+    @plane.setter
+    def plane(self, value) -> None:
+        self._cp_num_val(value, '_plane')
+
     @property
     def children(self) -> npt.NDArray[np.uint32]:
         return np.array(self._children, dtype=np.uint32)
+
+    @children.setter
+    def children(self, arr) -> None:
+        self._cp_arr(arr, '_children')
 
     @property
     def mins(self) -> npt.NDArray[np.uint32]:
         return np.array(self._mins, dtype=np.uint32)
 
+    @mins.setter
+    def mins(self, arr) -> None:
+        self._cp_arr(arr, '_mins')
+
     @property
     def maxs(self) -> npt.NDArray[np.uint32]:
         return np.array(self._maxs, dtype=np.uint32)
+
+    @maxs.setter
+    def maxs(self, arr) -> None:
+        self._cp_arr(arr, '_maxs')
 
 
 class Leaf(BaseStructure):
@@ -225,33 +241,65 @@ class Leaf(BaseStructure):
     def cluster(self) -> np.uint32:
         return np.uint32(self._cluster)
 
+    @cluster.setter
+    def cluster(self, value) -> None:
+        self._cp_num_val(value, '_cluster')
+
     @property
     def area(self) -> np.uint32:
         return np.uint32(self._area)
+
+    @area.setter
+    def area(self, value) -> None:
+        self._cp_num_val(value, '_area')
 
     @property
     def mins(self) -> npt.NDArray[np.uint32]:
         return np.array(self._mins, dtype=np.uint32)
 
+    @mins.setter
+    def mins(self, arr) -> None:
+        self._cp_arr(arr, '_mins')
+
     @property
     def maxs(self) -> npt.NDArray[np.uint32]:
         return np.array(self._maxs, dtype=np.uint32)
+
+    @maxs.setter
+    def maxs(self, arr) -> None:
+        self._cp_arr(arr, '_maxs')
 
     @property
     def leafface(self) -> np.uint32:
         return np.uint32(self._leafface)
 
+    @leafface.setter
+    def leafface(self, value) -> None:
+        self._cp_num_val(value, '_leafface')
+
     @property
     def n_leaffaces(self) -> np.uint32:
         return np.uint32(self._n_leaffaces)
+
+    @n_leaffaces.setter
+    def n_leaffaces(self, value) -> None:
+        self._cp_num_val(value, '_n_leaffaces')
 
     @property
     def leafbrush(self) -> np.uint32:
         return np.uint32(self._leafbrush)
 
+    @leafbrush.setter
+    def leafbrush(self, value) -> None:
+        self._cp_num_val(value, '_leafbrush')
+
     @property
     def n_leafbrushes(self) -> np.uint32:
         return np.uint32(self._n_leafbrushes)
+
+    @n_leafbrushes.setter
+    def n_leafbrushes(self, value) -> None:
+        self._cp_num_val(value, '_n_leafbrushes')
 
 
 class LeafFace(BaseStructure):
@@ -276,6 +324,10 @@ class LeafFace(BaseStructure):
     def face(self) -> np.uint32:
         return np.uint32(self._face)
 
+    @face.setter
+    def face(self, value) -> None:
+        self._cp_num_val(value, '_face')
+
 
 class LeafBrush(BaseStructure):
     """
@@ -298,6 +350,10 @@ class LeafBrush(BaseStructure):
     @property
     def brush(self) -> np.uint32:
         return np.uint32(self._brush)
+
+    @brush.setter
+    def brush(self, value) -> None:
+        self._cp_num_val(value, '_brush')
 
 
 class Model(BaseStructure):
@@ -340,25 +396,49 @@ class Model(BaseStructure):
     def mins(self) -> npt.NDArray[np.float32]:
         return np.array(self._mins, dtype=np.float32)
 
+    @mins.setter
+    def mins(self, arr) -> None:
+        self._cp_arr(arr, '_mins')
+
     @property
     def maxs(self) -> npt.NDArray[np.float32]:
         return np.array(self._maxs, dtype=np.float32)
+
+    @maxs.setter
+    def maxs(self, arr) -> None:
+        self._cp_arr(arr, '_maxs')
 
     @property
     def face(self) -> np.uint32:
         return np.uint32(self._face)
 
+    @face.setter
+    def face(self, value) -> None:
+        self._cp_num_val(value, '_face')
+
     @property
     def n_faces(self) -> np.uint32:
         return np.uint32(self._n_faces)
+
+    @n_faces.setter
+    def n_faces(self, value) -> None:
+        self._cp_num_val(value, '_n_faces')
 
     @property
     def brush(self) -> np.uint32:
         return np.uint32(self._brush)
 
+    @brush.setter
+    def brush(self, value) -> None:
+        self._cp_num_val(value, '_brush')
+
     @property
     def n_brushes(self) -> np.uint32:
         return np.uint32(self._n_brushes)
+
+    @n_brushes.setter
+    def n_brushes(self, value) -> None:
+        self._cp_num_val(value, '_n_brushes')
 
 
 class Brush(BaseStructure):
@@ -390,13 +470,25 @@ class Brush(BaseStructure):
     def brushside(self) -> np.uint32:
         return np.uint32(self._brushside)
 
+    @brushside.setter
+    def brushside(self, value) -> None:
+        self._cp_num_val(value, '_brushside')
+
     @property
     def n_brushsides(self) -> np.uint32:
         return np.uint32(self._n_brushsides)
 
+    @n_brushsides.setter
+    def n_brushsides(self, value) -> None:
+        self._cp_num_val(value, '_n_brushsides')
+
     @property
     def texture(self) -> np.uint32:
         return np.uint32(self._texture)
+
+    @texture.setter
+    def texture(self, value) -> None:
+        self._cp_num_val(value, '_texture')
 
 
 class Brushside(BaseStructure):
@@ -424,9 +516,17 @@ class Brushside(BaseStructure):
     def plane(self) -> np.uint32:
         return np.uint32(self._plane)
 
+    @plane.setter
+    def plane(self, value) -> None:
+        self._cp_num_val(value, '_plane')
+
     @property
     def texture(self) -> np.uint32:
         return np.uint32(self._texture)
+
+    @texture.setter
+    def texture(self, value) -> None:
+        self._cp_num_val(value, '_texture')
 
 
 class Vertex(BaseStructure):
@@ -442,7 +542,7 @@ class Vertex(BaseStructure):
         Vertex texture coordinates. 0=surface, 1=lightmap
     normal : npt.NDArray[np.float32]
         Vertex normal
-    color : npt.NDArray[np.byte]
+    color : npt.NDArray[np.ubyte]
         Vertex color. RGBA
     sz : np.uint32
         Structure's data total size
@@ -452,7 +552,7 @@ class Vertex(BaseStructure):
         ('_position', c_float * 3),
         ('_texcoord', (c_float * 2) * 2),
         ('_normal', c_float * 3),
-        ('_color', c_byte * 4)
+        ('_color', c_ubyte * 4)
     ]
     _sz = 44
 
@@ -460,17 +560,33 @@ class Vertex(BaseStructure):
     def position(self) -> npt.NDArray[np.float32]:
         return np.array(self._position, dtype=np.float32)
 
+    @position.setter
+    def position(self, arr) -> None:
+        self._cp_arr(arr, '_position')
+
     @property
     def texcoord(self) -> npt.NDArray[np.float32]:
         return np.array(self._texcoord, dtype=np.float32)
+
+    @texcoord.setter
+    def texcoord(self, arr) -> None:
+        self._cp_arr(arr, '_texcoord')
 
     @property
     def normal(self) -> npt.NDArray[np.float32]:
         return np.array(self._normal, dtype=np.float32)
 
+    @normal.setter
+    def normal(self, arr) -> None:
+        self._cp_arr(arr, '_normal')
+
     @property
-    def color(self) -> npt.NDArray[np.byte]:
-        return np.array(self._color, dtype=np.byte)
+    def color(self) -> npt.NDArray[np.ubyte]:
+        return np.array(self._color, dtype=np.ubyte)
+
+    @color.setter
+    def color(self, arr) -> None:
+        self._cp_arr(arr, '_color')
 
 
 class Meshvert(BaseStructure):
@@ -494,6 +610,10 @@ class Meshvert(BaseStructure):
     @property
     def offset(self) -> np.uint32:
         return np.uint32(self._offset)
+
+    @offset.setter
+    def offset(self, value) -> None:
+        self._cp_num_val(value, '_offset')
 
 
 class Effect(BaseStructure):
@@ -524,13 +644,25 @@ class Effect(BaseStructure):
     def name(self) -> str:
         return self._name.decode(CHAR_ENCODING)
 
+    @name.setter
+    def name(self, value) -> None:
+        self._cp_str_val(value, '_name', 64)
+
     @property
     def brush(self) -> np.uint32:
         return np.uint32(self._brush)
 
+    @brush.setter
+    def brush(self, value) -> None:
+        self._cp_num_val(value, '_brush')
+
     @property
     def unknown(self) -> np.uint32:
         return np.uint32(self._unknown)
+
+    @unknown.setter
+    def unknown(self, value) -> None:
+        self._cp_num_val(value, '_unknown')
 
 
 class Face(BaseStructure):
@@ -594,57 +726,113 @@ class Face(BaseStructure):
     def texture(self) -> np.uint32:
         return np.uint32(self._texture)
 
+    @texture.setter
+    def texture(self, value) -> None:
+        self._cp_num_val(value, '_texture')
+
     @property
     def effect(self) -> np.uint32:
         return np.uint32(self._effect)
+
+    @effect.setter
+    def effect(self, value) -> None:
+        self._cp_num_val(value, '_effect')
 
     @property
     def type(self) -> np.uint32:
         return np.uint32(self._type)
 
+    @type.setter
+    def type(self, value) -> None:
+        self._cp_num_val(value, '_type')
+
     @property
     def vertex(self) -> np.uint32:
         return np.uint32(self._vertex)
+
+    @vertex.setter
+    def vertex(self, value) -> None:
+        self._cp_num_val(value, '_vertex')
 
     @property
     def n_vertexes(self) -> np.uint32:
         return np.uint32(self._n_vertexes)
 
+    @n_vertexes.setter
+    def n_vertexes(self, value) -> None:
+        self._cp_num_val(value, '_n_vertexes')
+
     @property
     def meshvert(self) -> np.uint32:
         return np.uint32(self._meshvert)
+
+    @meshvert.setter
+    def meshvert(self, value) -> None:
+        self._cp_num_val(value, '_meshvert')
 
     @property
     def n_meshverts(self) -> np.uint32:
         return np.uint32(self._n_meshverts)
 
+    @n_meshverts.setter
+    def n_meshverts(self, value) -> None:
+        self._cp_num_val(value, '_n_meshverts')
+
     @property
     def lm_index(self) -> np.uint32:
         return np.uint32(self._lm_index)
+
+    @lm_index.setter
+    def lm_index(self, value) -> None:
+        self._cp_num_val(value, '_lm_index')
 
     @property
     def lm_start(self) -> npt.NDArray[np.uint32]:
         return np.array(self._lm_start, dtype=np.uint32)
 
+    @lm_start.setter
+    def lm_start(self, arr) -> None:
+        self._cp_arr(arr, '_lm_start')
+
     @property
     def lm_size(self) -> npt.NDArray[np.uint32]:
         return np.array(self._lm_size, dtype=np.uint32)
+
+    @lm_size.setter
+    def lm_size(self, arr) -> None:
+        self._cp_arr(arr, '_lm_size')
 
     @property
     def lm_origin(self) -> npt.NDArray[np.float32]:
         return np.array(self._lm_origin, dtype=np.float32)
 
+    @lm_origin.setter
+    def lm_origin(self, arr) -> None:
+        self._cp_arr(arr, '_lm_origin')
+
     @property
     def lm_vecs(self) -> npt.NDArray[np.float32]:
         return np.array(self._lm_vecs, dtype=np.float32)
+
+    @lm_vecs.setter
+    def lm_vecs(self, arr) -> None:
+        self._cp_arr(arr, '_lm_vecs')
 
     @property
     def normal(self) -> npt.NDArray[np.float32]:
         return np.array(self._normal, dtype=np.float32)
 
+    @normal.setter
+    def normal(self, arr) -> None:
+        self._cp_arr(arr, '_normal')
+
     @property
     def size(self) -> npt.NDArray[np.uint32]:
         return np.array(self._size, dtype=np.uint32)
+
+    @size.setter
+    def size(self, arr) -> None:
+        self._cp_arr(arr, '_size')
 
 
 class Lightmap(BaseStructure):
@@ -654,20 +842,24 @@ class Lightmap(BaseStructure):
 
     Attributes
     ----------
-    map : npt.NDArray[np.byte]
+    map : npt.NDArray[np.ubyte]
         Lightmap color data. RGB
     sz : np.uint32
         Structure's data total size
     """
 
     _fields_ = [
-        ('_map', ((c_byte * 3) * 128) * 128)
+        ('_map', ((c_ubyte * 3) * 128) * 128)
     ]
     _sz = 49152
 
     @property
-    def map(self) -> npt.NDArray[np.byte]:
-        return np.array(self._map, dtype=np.byte)
+    def map(self) -> npt.NDArray[np.ubyte]:
+        return np.array(self._map, dtype=np.ubyte)
+
+    @map.setter
+    def map(self, arr) -> None:
+        self._cp_arr(arr, '_map')
 
 
 class Lightvol(BaseStructure):
@@ -682,34 +874,46 @@ class Lightvol(BaseStructure):
 
     Attributes
     ----------
-    ambient : npt.NDArray[np.byte]
+    ambient : npt.NDArray[np.ubyte]
         Ambient color component. RGB
-    directional : npt.NDArray[np.byte]
+    directional : npt.NDArray[np.ubyte]
         Directional color component. RGB
-    dir : npt.NDArray[np.byte]
+    dir : npt.NDArray[np.ubyte]
         Direction to light. 0=phi, 1=theta
     sz : np.uint32
         Structure's data total size
     """
 
     _fields_ = [
-        ('_ambient', c_byte * 3),
-        ('_directional', c_byte * 3),
-        ('_dir', c_byte * 2),
+        ('_ambient', c_ubyte * 3),
+        ('_directional', c_ubyte * 3),
+        ('_dir', c_ubyte * 2),
     ]
     _sz = 8
 
     @property
-    def ambient(self) -> npt.NDArray[np.byte]:
-        return np.array(self._ambient, dtype=np.byte)
+    def ambient(self) -> npt.NDArray[np.ubyte]:
+        return np.array(self._ambient, dtype=np.ubyte)
+
+    @ambient.setter
+    def ambient(self, arr) -> None:
+        self._cp_arr(arr, '_ambient')
 
     @property
-    def directional(self) -> npt.NDArray[np.byte]:
-        return np.array(self._directional, dtype=np.byte)
+    def directional(self) -> npt.NDArray[np.ubyte]:
+        return np.array(self._directional, dtype=np.ubyte)
+
+    @directional.setter
+    def directional(self, arr) -> None:
+        self._cp_arr(arr, '_directional')
 
     @property
-    def dir(self) -> npt.NDArray[np.byte]:
-        return np.array(self._dir, dtype=np.byte)
+    def dir(self) -> npt.NDArray[np.ubyte]:
+        return np.array(self._dir, dtype=np.ubyte)
+
+    @dir.setter
+    def dir(self, arr) -> None:
+        self._cp_arr(arr, '_dir')
 
 
 class Visdata(BaseStructure):
@@ -723,7 +927,7 @@ class Visdata(BaseStructure):
         Number of vectors
     sz_vecs : np.uint32
         Size of each vector, in bytes
-    vecs : npt.NDArray[np.byte]
+    vecs : npt.NDArray[np.ubyte]
         Visibility data. One bit per cluster per vector
     sz : np.uint32
         Structure's data total size
@@ -735,7 +939,7 @@ class Visdata(BaseStructure):
         self.__n_vecs = c_uint32.from_buffer(data[:4])
         self._sz_vecs = c_uint32.from_buffer(data[4:8])
         total_vecs_size = self.__n_vecs.value * self._sz_vecs.value
-        self.__vecs = (c_byte * total_vecs_size).from_buffer(data[8:])
+        self.__vecs = (c_ubyte * total_vecs_size).from_buffer(data[8:])
 
     @property
     def n_vecs(self) -> np.uint32:
@@ -746,8 +950,8 @@ class Visdata(BaseStructure):
         return np.uint32(self._sz_vecs)
 
     @property
-    def vecs(self) -> npt.NDArray[np.byte]:
-        return np.array(self.__vecs, dtype=np.byte)
+    def vecs(self) -> npt.NDArray[np.ubyte]:
+        return np.array(self.__vecs, dtype=np.ubyte)
 
     @property
     def sz(self) -> np.uint32:
@@ -780,9 +984,17 @@ class DirEntry(BaseStructure):
     def offset(self) -> np.uint32:
         return np.uint32(self._offset)
 
+    @offset.setter
+    def offset(self, value) -> None:
+        self._cp_num_val(value, '_offset')
+
     @property
     def length(self) -> np.uint32:
         return np.uint32(self._length)
+
+    @length.setter
+    def length(self, value) -> None:
+        self._cp_num_val(value, '_length')
 
 
 class IBSPHeader(BaseStructure):
@@ -812,9 +1024,17 @@ class IBSPHeader(BaseStructure):
     def magic(self) -> str:
         return self._magic.decode(CHAR_ENCODING)
 
+    @magic.setter
+    def magic(self, value) -> None:
+        self._cp_str_val(value, '_magic')
+
     @property
     def version(self) -> np.uint32:
         return np.uint32(self._version)
+
+    @version.setter
+    def version(self, value) -> None:
+        self._cp_num_val(value, '_version')
 
     @property
     def direntry(self) -> List[DirEntry]:
