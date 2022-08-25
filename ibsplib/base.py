@@ -20,7 +20,16 @@ class BaseStructureMeta(type(Structure)):
 
 class BaseStructure(Structure, metaclass=BaseStructureMeta):
 
-    def _cp_arr(self, arr, field_name) -> None:
+    def __eq__(self, other):
+        if self.__class__ != other.__class__:
+            return False
+
+        return all([getattr(self, field[0]) == getattr(other, field[0]) for field in self._fields_])
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def _cp_arr(self, arr, field_name, dtype=None) -> None:
         """ Copies passed n-dim array to structures' field """
 
         arr_t = type(arr)
@@ -28,7 +37,7 @@ class BaseStructure(Structure, metaclass=BaseStructureMeta):
         if not np.issubdtype(arr_t, np.ndarray):
             raise TypeError(f'Expected to get value of type compatible with np.ndarray, but got {arr_t}')
 
-        arr = np.array(arr)
+        arr = np.array(arr, dtype=dtype)
         field_ref = getattr(self, field_name)
         orig_shape = np.shape(field_ref)
         shape = np.shape(arr)

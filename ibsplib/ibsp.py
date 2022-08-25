@@ -1040,6 +1040,10 @@ class IBSPHeader(BaseStructure):
     def direntry(self) -> List[DirEntry]:
         return list(self._direntry)
 
+    @direntry.setter
+    def direntry(self, arr) -> None:
+        self._cp_arr(arr, '_direntry', type(DirEntry))
+
 
 class IBSP:
     """

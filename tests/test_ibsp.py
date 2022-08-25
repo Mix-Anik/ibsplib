@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from ibsplib import CHAR_ENCODING
+from ibsplib.constants import CHAR_ENCODING
 from ibsplib.ibsp import *
 
 GEN_CASES_AMOUNT = 5
@@ -12,7 +12,7 @@ rand_float = lambda: RNG.random(size=1, dtype=np.float32)[0]
 rand_int_arr = lambda s: np.random.randint(0, 2**32-1, size=s, dtype=np.uint32)
 rand_int = lambda: np.random.randint(0, 2**32-1, dtype=np.uint32)
 rand_byte_arr = lambda s: np.random.randint(0, 2**8-1, size=s, dtype=np.ubyte)
-arr_eq = lambda arr1, arr2: np.array_equal(np.array(arr1), np.array(arr2))
+arr_eq = lambda arr1, arr2, dtype=None: np.array_equal(np.array(arr1, dtype=dtype), np.array(arr2, dtype=dtype))
 
 
 class TestLumps:
@@ -268,6 +268,9 @@ class TestIBSP:
         header = IBSPHeader()
         header.magic = magic.encode(CHAR_ENCODING)
         header.version = version
+        direntries = [DirEntry(rand_int(), rand_int()) for _ in range(17)]
+        header.direntry = direntries
 
         assert header.magic == magic
         assert header.version == version
+        assert arr_eq(header.direntry, direntries, type(DirEntry))
