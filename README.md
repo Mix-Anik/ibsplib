@@ -1,4 +1,7 @@
 # IBSPLib
+![Tests](https://github.com/Mix-Anik/ibsplib/actions/workflows/test.yml/badge.svg)
+![pypi](https://img.shields.io/pypi/v/ibsplib.svg)
+![python](https://img.shields.io/pypi/pyversions/ibsplib.svg)
 
 ibsplib is Python package for working with Quake 3 IBSP structures  
 References were taken from http://www.mralligator.com/q3
